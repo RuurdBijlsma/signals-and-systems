@@ -2,27 +2,23 @@
 #include <tgmath.h>
 #include "utils.h"
 #include "float.h"
-#include <stdbool.h>
 
 int main() {
+    double A, f, phi;
+    int x0, x1, x2;
+    scanf_s("%lf %lf %lf", &A, &f, &phi);
+    scanf_s("%i %i %i", &x0, &x1, &x2);
 
-    int fs;
-    double A, f, phi, x0, x1, x2;
-    scanf("%lf %lf %lf", &A, &f, &phi);
-    scanf("%lf %lf %lf", &x0, &x1, &x2);
+    double soundSpeed = 343;
+    int dist0 = abs(x2 - x0);
+    int dist1 = abs(x2 - x1);
+    double p0 = 2 * pi * f * dist0 / soundSpeed;
+    double p1 = 2 * pi * f * dist1 / soundSpeed;
+    double cx0, cy0, cx1, cy1, result, theta;
+    polarToCartesian(A, phi + p0, &cx0, &cy0);
+    polarToCartesian(A, phi + p1, &cx1, &cy1);
+    cartesianToPolar(cx0 + cx1, cy0 + cy1, &result, &theta);
 
-    int n = 100;
-
-    for (int i = 0; i < n; ++i) {
-        double t = (double) i * (1 / (double) fs);
-        double result1 = A1 * cos(2 * pi * f1 * t + phi1);
-        double result2 = A2 * cos(2 * pi * f2 * t + phi2);
-        if (!equals((float) result1, (float) result2, FLT_EPSILON)){
-            printf("NO");
-            return 0;
-        }
-    }
-
-    printf("YES");
+    printf("%.2lf", result);
     return 0;
 }

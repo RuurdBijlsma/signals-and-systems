@@ -1,8 +1,17 @@
 #ifndef UTILS
 #define UTILS
+
 #include <stdbool.h>
 
 const double pi;
+
+int gcd(int a, int b);
+
+int lcm(int a, int b);
+
+void polarToCartesian(double r, double theta, double *x, double *y);
+
+void cartesianToPolar(double x, double y, double *r, double *theta);
 
 bool equals(float a, float b, float epsilon);
 
