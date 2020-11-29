@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <tgmath.h>
 #include "utils.h"
-#include "float.h"
 
 int main() {
     double A, f, phi;
     int x0, x1, x2;
-    scanf_s("%lf %lf %lf", &A, &f, &phi);
-    scanf_s("%i %i %i", &x0, &x1, &x2);
+    scanf("%lf %lf %lf", &A, &f, &phi);
+    scanf("%i %i %i", &x0, &x1, &x2);
 
     double soundSpeed = 343;
     int dist0 = abs(x2 - x0);

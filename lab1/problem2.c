@@ -1,18 +1,15 @@
 #include <stdio.h>
-#include <tgmath.h>
 #include "utils.h"
 
 int main() {
 
-    float r, theta;
-    scanf("%f %f", &r, &theta);
-//    float
-//            x = 1.00,
-//            y = 1.57;
-    float y = r * sin(theta);
-    float x = r * cos(theta);
+    double r, theta;
+    scanf("%lf %lf", &r, &theta);
 
-    printf("%.2f %.2f", x, y);
+    double x, y;
+    polarToCartesian(r, theta, &x, &y);
+
+    printf("%.2lf %.2lf", x, y);
 
     return 0;
 }
