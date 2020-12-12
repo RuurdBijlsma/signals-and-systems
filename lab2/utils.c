@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 double *pearsonCorrelation(int lenTemplate, int *template, int lenInput, int *input, int *lenOutput) {
-    *lenOutput = lenInput - lenTemplate + 1;
+    int *correlation = correlator(lenTemplate, template, lenInput, input, lenOutput);
     double *output = makeDoubleArray(*lenOutput);
     double meanH = 0;
     for (int i = 0; i < lenTemplate; ++i) {
@@ -20,9 +20,9 @@ double *pearsonCorrelation(int lenTemplate, int *template, int lenInput, int *in
         }
         meanX /= lenTemplate;
 
-        double topPart = 0;
+        double topPart = correlation[d];
         for (int i = 0; i < lenTemplate; ++i) {
-            topPart += (input[i + d] - meanX) * (template[i] - meanH);
+            topPart -= input[i + d] * meanH - meanX * template[i] + meanX * meanH;
         }
 
         double inputDistance = 0;
@@ -37,6 +37,20 @@ double *pearsonCorrelation(int lenTemplate, int *template, int lenInput, int *in
 
         double bottomPart = sqrt(inputDistance) * sqrt(templateDistance);
         output[d] = topPart / bottomPart;
+    }
+    return output;
+}
+
+int *correlator(int lenTemplate, const int *template, int lenInput, const int *input, int *lenOutput) {
+    *lenOutput = lenInput - lenTemplate + 1;
+    int *output = makeIntArray(*lenOutput);
+
+    for (int d = 0; d < *lenOutput; ++d) {
+        int ySum = 0;
+        for (int i = 0; i < lenTemplate; ++i) {
+            ySum += input[i + d] * template[i];
+        }
+        output[d] = ySum;
     }
     return output;
 }

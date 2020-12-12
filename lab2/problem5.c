@@ -2,21 +2,11 @@
 #include "utils.h"
 
 int main() {
-    int lenInput, *input, lenTemplate, *template, lenOutput, *output;
+    int lenInput, *input, lenTemplate, *template, lenOutput;
     template = readSignal(&lenTemplate);
     input = readSignal(&lenInput);
 
-    lenOutput = lenInput - lenTemplate + 1;
-    output = makeIntArray(lenOutput);
-
-    for (int d = 0; d < lenOutput; ++d) {
-        int ySum = 0;
-        for (int i = 0; i < lenTemplate; ++i) {
-            ySum += input[i + d] * template[i];
-        }
-        output[d] = ySum;
-    }
-
+    int *output = correlator(lenTemplate, template, lenInput, input, &lenOutput);
     printSignal(lenOutput, output);
 
     free(input);

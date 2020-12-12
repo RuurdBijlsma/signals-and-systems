@@ -5,6 +5,8 @@
 
 double *pearsonCorrelation(int lenTemplate, int *template, int lenInput, int *input, int *lenOutput);
 
+int *correlator(int lenTemplate, const int *template, int lenInput, const int *input, int *lenOutput);
+
 int *applyFilter(int lenInput, const int *input, int lenKernel, const int *kernel, int *lenOutput);
 
 int *readSignal(int *len);
