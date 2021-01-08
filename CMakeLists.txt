@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(signals_lab1 C)
 
 set(CMAKE_C_STANDARD 99)
+link_libraries(m)
 
 #add_executable(signals_lab1 lab1/utils.c lab1/problem1.c)
 #add_executable(signals_lab1 lab1/utils.c lab1/problem2.c)
@@ -21,5 +22,5 @@ set(CMAKE_C_STANDARD 99)
 #add_executable(signals_lab2 lab2/utils.c lab2/problem6.c)
 #add_executable(signals_lab2 lab2/utils.c lab2/problem7.c)
 
-#add_executable(signals_lab3 lab3/utils.c lab3/pearson2D.c lab3/problem1.c)
-add_executable(signals_lab3 lab3/pearson2D.c lab3/utils.c lab3/problem2.c)
+add_executable(signals_lab3 lab3/utils.c lab3/pearson2D.c lab3/problem1.c)
+#add_executable(signals_lab3 lab3/pearson2D.c lab3/utils.c lab3/problem2.c)

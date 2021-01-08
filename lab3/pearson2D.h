@@ -78,5 +78,3 @@ int pearsonCorrelator(GrayImage image, GrayImage mask, int corrWidth, int corrHe
 int drawbox(int y0, int x0, int y1, int x1, int **im);
 
 int match(double p, int mw, int mh, double **pcorr, GrayImage image);
-
-int main(int argc, char **argv);

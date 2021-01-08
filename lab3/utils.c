@@ -1,38 +1,82 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <complex.h>
 #include <math.h>
 #include "utils.h"
 #include "pearson2D.h"
-#include <stdbool.h>
+
+double complex *ifft(double complex *signal, int len) {
+    double complex *result = makeComplexArray(len);
+    for (int i = 0; i < len; ++i)
+        result[i] = conj(signal[i]);
+    result = fft(result, len);
+    for (int i = 0; i < len; ++i)
+        result[i] = conj(result[i]) / len;
+    return result;
+}
+
+double complex *fft(const double complex *signal, int len) {
+    double complex *result = makeComplexArray(len);
+    if (len == 1) {
+        result[0] = signal[0];
+        return result;
+    }
+
+    int halfLen = len / 2;
+    double complex *evens = makeComplexArray(halfLen);
+    double complex *odds = makeComplexArray(halfLen);
+    for (int i = 0; i < len; ++i) {
+        if (i % 2 == 0)evens[i / 2] = signal[i];
+        else odds[i / 2] = signal[i];
+    }
+    double complex *even = fft(evens, halfLen);
+    double complex *odd = fft(odds, halfLen);
+
+    for (int i = 0; i < halfLen; ++i) {
+        double complex expt = cexp(-2 * pi * I * i / len) * odd[i];
+        result[i] = even[i] + expt;
+        result[i + halfLen] = even[i] - expt;
+    }
+
+    return result;
+}
 
 double *convolve(const int *inputSignal, int lenSignal, const int *inputKernel, int lenKernel, int *lenOutput) {
     *lenOutput = lenSignal + lenKernel - 1;
     int size = powerOfTwo(*lenOutput);
-    double *reKernel = makeDoubleArray(size);
-    double *imKernel = makeDoubleArray(size);
-    double *reSignal = makeDoubleArray(size);
-    double *imSignal = makeDoubleArray(size);
+    double complex *kernel = makeComplexArray(size);
+    double complex *signal = makeComplexArray(size);
     for (int i = 0; i < size; ++i) {
-        if (i < lenKernel)
-            reKernel[i] = inputKernel[i];
-        if (i < lenSignal)
-            reSignal[i] = inputSignal[i];
-        imKernel[i] = 0;
-        imSignal[i] = 0;
+        kernel[i] = i < lenKernel ? inputKernel[i] : 0;
+        signal[i] = i < lenSignal ? inputSignal[i] : 0;
     }
 
-    fft1D(FORWARD, size, reSignal, imSignal);
-    fft1D(FORWARD, size, reKernel, imKernel);
+    double complex *kFft = fft(kernel, size);
+    double complex *sFft = fft(signal, size);
 
-    for (int i = 0; i < size; ++i) {
-        double re, im;
-        complexMultiply(reSignal[i], imSignal[i], reKernel[i], imKernel[i], &re, &im);
-        imSignal[i] = im;
-        reSignal[i] = re;
-    }
+    for (int i = 0; i < size; ++i)
+        sFft[i] *= kFft[i];
 
-    fft1D(REVERSE, size, reSignal, imSignal);
-    return reSignal;
+    double complex *iFft = ifft(sFft, size);
+
+    double *result = makeDoubleArray(size);
+    for (int i = 0; i < size; ++i)
+        result[i] = creal(iFft[i]);
+    return result;
+}
+
+double complex *toComplexAndPad(const int *input, int len, int *lenOutput) {
+    *lenOutput = powerOfTwo(len);
+    double complex *result = makeComplexArray(*lenOutput);
+    for (int i = 0; i < len; ++i)
+        result[i] = i < len ? input[i] : 0;
+    return result;
+}
+
+double complex *toComplex(int *real, int *imag, int size) {
+    double complex *result = makeComplexArray(size);
+    for (int i = 0; i < size; ++i)
+        result[i] = real[i] + imag[i] * I;
+    return result;
 }
 
 void complexMultiply(double reA, double imA, double reB, double imB, double *reOut, double *reIm) {
@@ -75,6 +119,19 @@ void printSignalDbl(int len, double *x) {
     printf("]\n");
 }
 
+void printComplex(complex double x) {
+    printf("%.3lf+%.3lfi\n", creal(x), cimag(x));
+}
+
+void printSignalCmplx(int len, complex double *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(", ");
+        printf("%.1lf+%.1lfi", creal(x[i]), cimag(x[i]));
+    }
+    printf("]\n");
+}
+
 const double pi = 3.141592653589793238462643383279502884;
 
 bool equals(float a, float b, float epsilon) {
@@ -98,6 +155,11 @@ int *makeIntArray(int n) {
 double *makeDoubleArray(int n) {
     /* allocates dynamic double array of size/length n */
     return safeMalloc(n * sizeof(double));
+}
+
+double complex *makeComplexArray(int n) {
+    /* allocates dynamic double array of size/length n */
+    return safeMalloc(n * sizeof(double complex));
 }
 
 void destroyArray(void *p) {
