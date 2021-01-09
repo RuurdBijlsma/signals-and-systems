@@ -141,6 +141,15 @@ void printSignalCmplx(int len, complex double *x) {
     printf("]\n");
 }
 
+void printSignalUint(int len, uint *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(", ");
+        printf("%u", x[i]);
+    }
+    printf("]\n");
+}
+
 const double pi = 3.141592653589793238462643383279502884;
 
 bool equals(float a, float b, float epsilon) {
@@ -159,6 +168,11 @@ void *safeMalloc(int sz) {
 int *makeIntArray(int n) {
     /* allocates dynamic int array of size/length n */
     return safeMalloc(n * sizeof(int));
+}
+
+unsigned int *makeUintArray(int n) {
+    /* allocates dynamic int array of size/length n */
+    return safeMalloc(n * sizeof(unsigned int));
 }
 
 double *makeDoubleArray(int n) {

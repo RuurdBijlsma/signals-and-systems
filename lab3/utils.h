@@ -35,6 +35,7 @@ bool equals(float a, float b, float epsilon);
 void *safeMalloc(int sz);
 
 int *makeIntArray(int n);
+unsigned int *makeUintArray(int n);
 
 double *makeDoubleArray(int n);
 
@@ -46,4 +47,5 @@ void printIntArray(int length, int *arr);
 
 void printDoubleArray(int length, double *arr);
 
+void printSignalUint(int len, unsigned int *x);
 #endif
