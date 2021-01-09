@@ -1,5 +1,5 @@
-#include "pearson2D.h"
 #include "utils.h"
+#include <math.h>
 
 int main(void) {
     int lenKernel, lenSignal, lenOutput;

@@ -79,6 +79,15 @@ double complex *toComplex(int *real, int *imag, int size) {
     return result;
 }
 
+int powerOfTwo(int n) {
+    int p2;
+    p2 = 1;
+    while (p2 < n) {
+        p2 *= 2;
+    }
+    return p2;
+}
+
 void complexMultiply(double reA, double imA, double reB, double imB, double *reOut, double *reIm) {
     double k1 = reB * (reA + imA);
     double k2 = reA * (imB - reB);

@@ -16,6 +16,8 @@ double complex *toComplex(int *real, int *imag, int size);
 
 void complexMultiply(double reA, double imA, double reB, double imB, double *reOut, double *reIm);
 
+int powerOfTwo(int n);
+
 int *readSignal(int *len);
 
 void printSignal(int len, int *x);

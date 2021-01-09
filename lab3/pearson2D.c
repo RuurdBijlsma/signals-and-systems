@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "utils.h"
 
 #define MAX(a, b) ((a)>(b) ? (a) : (b))
 #define MIN(a, b) ((a)<(b) ? (a) : (b))
@@ -203,15 +204,6 @@ void mirror(GrayImage image) {
     }
 }
 
-int powerOfTwo(int n) {
-    int p2;
-    p2 = 1;
-    while (p2 < n) {
-        p2 *= 2;
-    }
-    return p2;
-}
-
 /*-------------------------------------------------------------------------
    This computes an in-place complex-to-complex FFT
    x and y are the real and imaginary arrays of 2^m points.
@@ -298,9 +290,24 @@ void fft2D(int direction, int width, int height, double **re, double **im) {
     /* Note that the parameters re and im denotes the REal part and
      * the IMaginary part of the 2D image.
      */
-    printf("fft2D: YOU HAVE TO IMPLEMENT THE BODY OF THIS FUNCTION YOURSELF\n");
-    printf("MAKE USE OF THE fft1D() FUNCTION\n");
-    exit(0);
+    for (int y = 0; y < height; ++y) {
+        double *reRow = re[y];
+        double *imRow = im[y];
+        fft1D(direction, width, reRow, imRow);
+    }
+    for (int x = 0; x < width; ++x) {
+        double *reColumn = makeDoubleArray(height);
+        double *imColumn = makeDoubleArray(height);
+        for (int y = 0; y < height; ++y) {
+            reColumn[y] = re[y][x];
+            imColumn[y] = im[y][x];
+        }
+        fft1D(direction, height, reColumn, imColumn);
+        for (int y = 0; y < height; ++y) {
+            re[y][x] = reColumn[y];
+            im[y][x] = imColumn[y];
+        }
+    }
 }
 
 void fftCorrelator(GrayImage image, GrayImage mask,
@@ -555,42 +562,3 @@ int match(double p, int mw, int mh,
     }
     return cnt;
 }
-
-//int main(int argc, char **argv) {
-//    GrayImage image;
-//    GrayImage mask;
-//    double **corr;
-//
-//    /* read input image */
-//    if (readPGM("emmius.pgm", &image) == -1) {
-//        fprintf(stderr, "Error: opening image file 'emmius.pgm' failed\n");
-//        return EXIT_FAILURE;
-//    }
-//
-//    /* read mask image */
-//    if (readPGM("M.pgm", &mask) == -1) {
-//        fprintf(stderr, "Error: opening mask image file 'M.pgm' failed\n");
-//        return EXIT_FAILURE;
-//    }
-//
-//    /* create correlation image */
-//    int corrWidth = image.width + mask.width - 1;
-//    int corrHeight = image.height + mask.height - 1;
-//    corr = allocDoubleArr2D(corrWidth, corrHeight);
-//
-//    /* correlate */
-//    pearsonCorrelator(image, mask, corrWidth, corrHeight, corr);
-//
-//    /* output image and print number of matches */
-//    int cnt = match(THRESHOLD, mask.width, mask.height, corr, image);
-//    printf("%d\n", cnt);
-//    writePGM("match.pgm", image);
-//
-//    /* deallocate images */
-//    free(corr[0]);
-//    free(corr);
-//    freeImage(mask);
-//    freeImage(image);
-//
-//    return EXIT_SUCCESS;
-//}

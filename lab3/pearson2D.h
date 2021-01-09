@@ -41,8 +41,6 @@ int writePGM(char *filename, GrayImage image);
 
 void mirror(GrayImage image);
 
-int powerOfTwo(int n);
-
 /*-------------------------------------------------------------------------
    This computes an in-place complex-to-complex FFT
    x and y are the real and imaginary arrays of 2^m points.

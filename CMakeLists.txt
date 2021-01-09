@@ -22,5 +22,6 @@ link_libraries(m)
 #add_executable(signals_lab2 lab2/utils.c lab2/problem6.c)
 #add_executable(signals_lab2 lab2/utils.c lab2/problem7.c)
 
-add_executable(signals_lab3 lab3/utils.c lab3/pearson2D.c lab3/problem1.c)
-#add_executable(signals_lab3 lab3/pearson2D.c lab3/utils.c lab3/problem2.c)
+#add_executable(signals_lab3 lab3/utils.c lab3/problem1.c)
+#add_executable(signals_lab3 lab3/utils.c lab3/problem2.c)
+add_executable(signals_lab3 lab3/utils.c lab3/pearson2D.c lab3/problem3.c)

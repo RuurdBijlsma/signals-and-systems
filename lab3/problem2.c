@@ -1,4 +1,4 @@
-#include "pearson2D.h"
+#include <math.h>
 #include "utils.h"
 
 int *correlator(const int *signal, int lenSignal, const int *kernel, int lenKernel, int *lenOutput) {
