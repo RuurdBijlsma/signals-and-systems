@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <complex.h>
 #include <math.h>
+#include <stdlib.h>
 #include "utils.h"
-#include "pearson2D.h"
 
 double complex *ifft(double complex *signal, int len) {
     double complex *result = makeComplexArray(len);
@@ -110,46 +110,6 @@ int *readSignal(int *len) {
     return x;
 }
 
-void printSignal(int len, int *x) {
-    printf("%d: [", len);
-    if (len > 0) {
-        printf("%d", x[0]);
-        for (int i = 1; i < len; i++) printf(",%d", x[i]);
-    }
-    printf("]\n");
-}
-
-void printSignalDbl(int len, double *x) {
-    printf("%d: [", len);
-    if (len > 0) {
-        printf("%.5lf", x[0]);
-        for (int i = 1; i < len; i++) printf(",%.5lf", x[i]);
-    }
-    printf("]\n");
-}
-
-void printComplex(complex double x) {
-    printf("%.3lf+%.3lfi\n", creal(x), cimag(x));
-}
-
-void printSignalCmplx(int len, complex double *x) {
-    printf("%d: [", len);
-    for (int i = 0; i < len; i++) {
-        if (i > 0) printf(", ");
-        printf("%.1lf+%.1lfi", creal(x[i]), cimag(x[i]));
-    }
-    printf("]\n");
-}
-
-void printSignalUint(int len, uint *x) {
-    printf("%d: [", len);
-    for (int i = 0; i < len; i++) {
-        if (i > 0) printf(", ");
-        printf("%u", x[i]);
-    }
-    printf("]\n");
-}
-
 const double pi = 3.141592653589793238462643383279502884;
 
 bool equals(float a, float b, float epsilon) {
@@ -168,6 +128,21 @@ void *safeMalloc(int sz) {
 int *makeIntArray(int n) {
     /* allocates dynamic int array of size/length n */
     return safeMalloc(n * sizeof(int));
+}
+
+int64_t *makeInt64Array(int n) {
+    /* allocates dynamic int array of size/length n */
+    return safeMalloc(n * sizeof(int64_t));
+}
+
+u_int64_t *makeUint64Array(int n) {
+    /* allocates dynamic int array of size/length n */
+    return safeMalloc(n * sizeof(u_int64_t));
+}
+
+bool *makeBoolArray(int n) {
+    /* allocates dynamic int array of size/length n */
+    return safeMalloc(n * sizeof(bool));
 }
 
 unsigned int *makeUintArray(int n) {
@@ -207,6 +182,64 @@ void printDoubleArray(int length, double *arr) {
         for (int i = 1; i < length; i++) {
             printf(",%.2lf", arr[i]);
         }
+    }
+    printf("]\n");
+}
+
+void printSignal(int len, int *x) {
+    printf("%d: [", len);
+    if (len > 0) {
+        printf("%d", x[0]);
+        for (int i = 1; i < len; i++) printf(",%d", x[i]);
+    }
+    printf("]\n");
+}
+
+void printSignalDbl(int len, double *x) {
+    printf("%d: [", len);
+    if (len > 0) {
+        printf("%.5lf", x[0]);
+        for (int i = 1; i < len; i++) printf(",%.5lf", x[i]);
+    }
+    printf("]\n");
+}
+
+void printComplex(complex double x) {
+    printf("%.3lf+%.3lfi\n", creal(x), cimag(x));
+}
+
+void printSignalCmplx(int len, complex double *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(",");
+        printf("%.1lf+%.1lfi", creal(x[i]), cimag(x[i]));
+    }
+    printf("]\n");
+}
+
+void printSignalUint(int len, unsigned int *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(",");
+        printf("%u", x[i]);
+    }
+    printf("]\n");
+}
+
+void printSignalUint64(int len, u_int64_t *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(",");
+        printf("%lu", x[i]);
+    }
+    printf("]\n");
+}
+
+void printSignalInt64(int len, int64_t *x) {
+    printf("%d: [", len);
+    for (int i = 0; i < len; i++) {
+        if (i > 0) printf(",");
+        printf("%ld", x[i]);
     }
     printf("]\n");
 }

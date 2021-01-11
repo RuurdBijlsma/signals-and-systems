@@ -20,26 +20,25 @@ int powerOfTwo(int n);
 
 int *readSignal(int *len);
 
-void printSignal(int len, int *x);
-
-void printSignalDbl(int len, double *x);
-
-void printComplex(double complex x);
-
-void printSignalCmplx(int len, complex double *x);
-
 const double pi;
 
 bool equals(float a, float b, float epsilon);
 
 void *safeMalloc(int sz);
 
+int64_t *makeInt64Array(int n);
+
 int *makeIntArray(int n);
+
 unsigned int *makeUintArray(int n);
 
 double *makeDoubleArray(int n);
 
 double _Complex *makeComplexArray(int n);
+
+bool *makeBoolArray(int n);
+
+u_int64_t *makeUint64Array(int n);
 
 void destroyArray(void *p);
 
@@ -47,5 +46,18 @@ void printIntArray(int length, int *arr);
 
 void printDoubleArray(int length, double *arr);
 
+void printSignal(int len, int *x);
+
+void printSignalDbl(int len, double *x);
+
+void printSignalCmplx(int len, complex double *x);
+
+void printSignalUint64(int len, u_int64_t *x);
+
 void printSignalUint(int len, unsigned int *x);
+
+void printComplex(double complex x);
+
+void printSignalInt64(int len, int64_t *x);
+
 #endif
