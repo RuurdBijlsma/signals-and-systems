@@ -15,7 +15,6 @@ int main(void) {
 //    uint w = 243;
 //    uint N = 8192;
     uint prime = 40961;
-    uint *r = ntt(signal, n, prime);
-
+    uint *r = intt(signal, n, prime);
     printSignalUint(length, r);
 }

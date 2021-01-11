@@ -4,6 +4,137 @@
 #include <stdlib.h>
 #include "utils.h"
 
+uint powMod(uint base, uint exponent, uint prime) {
+    /* This function computes: base raised to the power exponent modulus prime
+     * in math notation: (base^exponent) mod prime
+     */
+    uint pm = 1;
+    base = base % prime;
+    while (exponent > 0) {
+        if (exponent % 2 == 1) { /* exponent is odd */
+            pm = (pm * base) % prime;
+        }
+        exponent /= 2;
+        base = (base * base) % prime;
+    }
+    return pm;
+}
+
+bool isPrime(uint n) {
+    if (n <= 2)
+        return false;
+    for (int i = 2; i <= n / 2; ++i)
+        if (n % i == 0)
+            return false;
+    return true;
+}
+
+int generatePrimitiveRoot(int prime) {
+    for (int i = 0; i < prime; ++i) {
+        if (isPrime(i)) {
+            bool *s = makeBoolArray(prime);
+            for (int j = 0; j < prime + 1; ++j)
+                s[j] = false;
+            for (int j = 0; j < prime; ++j) {
+                uint res = powMod(i, j, prime);
+                s[res] = true;
+                if (res == 0) // Not allowed
+                    break;
+            }
+            if (s[0])
+                continue;
+
+            bool allTrue = true;
+            for (int j = 1; j < prime; ++j)
+                if (!s[j]) {
+                    allTrue = false;
+                    break;
+                }
+            if (allTrue)
+                return i;
+        }
+    }
+    return -1;
+}
+
+uint invMod(uint w, uint q) {
+    return powMod(w, q - 2, q);
+}
+
+uint *auxNtt(const uint *x, int n, uint prime, uint root, bool inverse) {
+    uint *result = makeUintArray(n);
+    if (n <= 1) {
+        result[0] = x[0];
+        return result;
+    }
+
+    uint k = (prime - 1) / n;
+    uint wN = powMod(root, k, prime);
+//    printf("should be 1: %u\n", powMod(wN, n, prime));
+    if (inverse)
+        wN = invMod(wN, prime);
+
+    int halfLen = n / 2;
+    uint *evens = makeUintArray(halfLen);
+    uint *odds = makeUintArray(halfLen);
+    for (int i = 0; i < n; ++i) {
+        if (i % 2 == 0) evens[i / 2] = x[i];
+        else odds[i / 2] = x[i];
+    }
+    uint *even = auxNtt(evens, halfLen, prime, root, inverse);
+    uint *odd = auxNtt(odds, halfLen, prime, root, inverse);
+
+    for (int i = 0; i < halfLen; ++i) {
+        uint t = (powMod(wN, i, prime) * odd[i]) % prime;
+        result[i] = (even[i] + t) % prime;
+        result[i + halfLen] = (even[i] + prime - t) % prime;
+    }
+
+    return result;
+}
+
+uint *intt(const uint *signal, int len, uint prime) {
+    uint root = generatePrimitiveRoot(prime);
+    uint *result = auxNtt(signal, len, prime, root, true);
+    uint iMod = invMod(len, prime);
+    for (int i = 0; i < len; ++i)
+        result[i] = (result[i] * iMod) % prime;
+    return result;
+}
+
+uint *ntt(const uint *signal, int len, uint prime) {
+    uint root = generatePrimitiveRoot(prime);
+    return auxNtt(signal, len, prime, root, false);
+}
+
+uint findPrime(uint n) {
+    uint k = 1;
+    while (!(isPrime(k++ * n + 1)));
+    return k * n + 1;
+}
+
+uint *convolveNtt(const int *inputSignal, int lenSignal, const int *inputKernel, int lenKernel, int *lenOutput) {
+    *lenOutput = lenSignal + lenKernel - 1;
+    int size = powerOfTwo(*lenOutput);
+    uint *kernel = makeUintArray(size);
+    uint *signal = makeUintArray(size);
+    for (int i = 0; i < size; ++i) {
+        kernel[i] = i < lenKernel ? inputKernel[i] : 0;
+        signal[i] = i < lenSignal ? inputSignal[i] : 0;
+    }
+
+//    uint prime = findPrime(size * size * size);
+    uint prime = 40961;
+//    printf("Using prime %u\n", prime);
+    uint *kNtt = ntt(kernel, size, prime);
+    uint *sNtt = ntt(signal, size, prime);
+
+    for (int i = 0; i < size; ++i)
+        kNtt[i] = (kNtt[i] * sNtt[i]) % prime;
+
+    return intt(kNtt, size, prime);
+}
+
 double complex *ifft(double complex *signal, int len) {
     double complex *result = makeComplexArray(len);
     for (int i = 0; i < len; ++i)
@@ -104,7 +235,8 @@ int *readSignal(int *len) {
     do c = (char) getchar(); while (c != '[');
     if (*len > 0) {
         scanf("%d", &x[0]);
-        for (int i = 1; i < *len; i++) scanf(",%d", &x[i]);
+        for (int i = 1; i < *len; i++)
+            scanf(",%d", &x[i]);
     }
     do c = (char) getchar(); while (c != ']');
     return x;
@@ -130,15 +262,15 @@ int *makeIntArray(int n) {
     return safeMalloc(n * sizeof(int));
 }
 
-int64_t *makeInt64Array(int n) {
-    /* allocates dynamic int array of size/length n */
-    return safeMalloc(n * sizeof(int64_t));
-}
-
-u_int64_t *makeUint64Array(int n) {
-    /* allocates dynamic int array of size/length n */
-    return safeMalloc(n * sizeof(u_int64_t));
-}
+//int64_t *makeInt64Array(int n) {
+//    /* allocates dynamic int array of size/length n */
+//    return safeMalloc(n * sizeof(int64_t));
+//}
+//
+//u_int64_t *makeUint64Array(int n) {
+//    /* allocates dynamic int array of size/length n */
+//    return safeMalloc(n * sizeof(u_int64_t));
+//}
 
 bool *makeBoolArray(int n) {
     /* allocates dynamic int array of size/length n */
@@ -226,20 +358,20 @@ void printSignalUint(int len, unsigned int *x) {
     printf("]\n");
 }
 
-void printSignalUint64(int len, u_int64_t *x) {
-    printf("%d: [", len);
-    for (int i = 0; i < len; i++) {
-        if (i > 0) printf(",");
-        printf("%lu", x[i]);
-    }
-    printf("]\n");
-}
-
-void printSignalInt64(int len, int64_t *x) {
-    printf("%d: [", len);
-    for (int i = 0; i < len; i++) {
-        if (i > 0) printf(",");
-        printf("%ld", x[i]);
-    }
-    printf("]\n");
-}
+//void printSignalUint64(int len, u_int64_t *x) {
+//    printf("%d: [", len);
+//    for (int i = 0; i < len; i++) {
+//        if (i > 0) printf(",");
+//        printf("%lu", x[i]);
+//    }
+//    printf("]\n");
+//}
+//
+//void printSignalInt64(int len, int64_t *x) {
+//    printf("%d: [", len);
+//    for (int i = 0; i < len; i++) {
+//        if (i > 0) printf(",");
+//        printf("%ld", x[i]);
+//    }
+//    printf("]\n");
+//}
